@@ -1,16 +1,27 @@
-# React + Vite
+# imsonw-labs
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Portfolio & blog cá nhân — single-page site xây bằng React + Vite, hỗ trợ song ngữ (vi/en) và dark/light theme.
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- No router — điều hướng qua `useState` tab switch trong `src/App.jsx`
+- No CSS framework — theming bằng CSS custom properties (`src/index.css`)
+- Lint bằng [oxlint](https://oxc.rs)
 
-## React Compiler
+## Commands
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run dev       # dev server với HMR
+npm run build     # production build ra dist/
+npm run lint      # lint với oxlint
+npm run preview   # serve thử bản build production
+```
 
-## Expanding the Oxlint configuration
+## Cấu trúc nội dung
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Toàn bộ nội dung site (bài viết, project, UI strings) nằm trong `src/data/` dưới dạng object JS — component chỉ render, không chứa nội dung cứng. Xem `CLAUDE.md` để biết chi tiết kiến trúc.
+
+## Deploy
+
+Site được deploy tự động trên [Vercel](https://vercel.com) — mỗi push lên `main` tạo một production deployment mới, mỗi PR có preview deployment riêng.
