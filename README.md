@@ -22,6 +22,7 @@ npm run preview   # serve thử bản build production
 
 Toàn bộ nội dung site (bài viết, project, UI strings) nằm trong `src/data/` dưới dạng object JS — component chỉ render, không chứa nội dung cứng. Xem `CLAUDE.md` để biết chi tiết kiến trúc.
 
+
 ## Deploy
 
 Site được deploy tự động trên [Vercel](https://vercel.com) — mỗi push lên `main` tạo một production deployment mới, mỗi PR có preview deployment riêng.
