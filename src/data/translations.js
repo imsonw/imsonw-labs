@@ -4,7 +4,11 @@ export const translations = {
     navProjects: "Dự Án",
     navBlog: "Bài Viết",
     navContact: "Liên Hệ",
-    
+    navChangeLanguage: "Đổi ngôn ngữ",
+    navToggleTheme: "Đổi giao diện",
+    navLightMode: "Chế độ sáng",
+    navDarkMode: "Chế độ tối",
+
     heroTitle: "Xin chào, tôi là",
     heroRole: "Mobile Developer",
     heroSubtitle: "Tôi xây dựng ứng dụng di động đa nền tảng (iOS, Flutter, React Native) từ kiến trúc đến khi phát hành trên App Store, với 8+ năm kinh nghiệm cùng startup và khách hàng quốc tế.",
@@ -31,6 +35,9 @@ export const translations = {
     blogSearchPlaceholder: "Tìm kiếm bài viết...",
     blogBackBtn: "Quay lại danh sách",
     blogCategory: "Chủ đề",
+    blogNoResults: "Không tìm thấy bài viết phù hợp.",
+    blogCopy: "Sao chép",
+    blogCopied: "Đã chép",
 
     contactTitle: "Kết Nối Với Tôi",
     contactSubtitle: "Bạn có dự án thú vị hay cơ hội hợp tác nghề nghiệp? Hãy để lại lời nhắn hoặc liên hệ qua mạng xã hội.",
@@ -42,8 +49,10 @@ export const translations = {
     contactSuccess: "Cảm ơn bạn! Tin nhắn đã được gửi thành công.",
     contactInfo: "Thông tin liên hệ",
     contactLocation: "Địa điểm",
-    contactResume: "Tải Resume (PDF)",
-    
+    contactResume: "Xem Portfolio cá nhân",
+    contactResumeCardTitle: "CV & Portfolio",
+    contactResumeCardDesc: "CV đầy đủ cùng các dự án đã thực hiện được trình bày chi tiết tại portfolio cá nhân của tôi.",
+
     footerText: "Thiết kế & hoàn thiện với sự tận tâm. © 2026",
   },
   en: {
@@ -51,7 +60,11 @@ export const translations = {
     navProjects: "Projects",
     navBlog: "Blog",
     navContact: "Contact",
-    
+    navChangeLanguage: "Change Language",
+    navToggleTheme: "Toggle Theme",
+    navLightMode: "Light Mode",
+    navDarkMode: "Dark Mode",
+
     heroTitle: "Hi, I am",
     heroRole: "Mobile Developer",
     heroSubtitle: "I build cross-platform mobile apps (iOS, Flutter, React Native) end-to-end — from architecture to App Store — with 8+ years partnering with startups and international clients.",
@@ -78,6 +91,9 @@ export const translations = {
     blogSearchPlaceholder: "Search posts...",
     blogBackBtn: "Back to articles",
     blogCategory: "Category",
+    blogNoResults: "No articles found matching your criteria.",
+    blogCopy: "Copy",
+    blogCopied: "Copied",
 
     contactTitle: "Get in Touch",
     contactSubtitle: "Have an exciting project or career opportunity? Send me a message or connect via social platforms.",
@@ -89,8 +105,10 @@ export const translations = {
     contactSuccess: "Thank you! Your message has been sent successfully.",
     contactInfo: "Contact Details",
     contactLocation: "Location",
-    contactResume: "Download Resume (PDF)",
-    
+    contactResume: "Visit my Portfolio",
+    contactResumeCardTitle: "CV & Portfolio",
+    contactResumeCardDesc: "My full CV and detailed project case studies live on my personal portfolio.",
+
     footerText: "Designed & crafted with passion. © 2026",
   }
 };

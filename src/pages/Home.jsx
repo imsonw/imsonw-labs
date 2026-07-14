@@ -1,27 +1,28 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { ArrowRight, ExternalLink, BookOpen, FolderKanban, Mail } from 'lucide-react';
+import { ExternalLink, BookOpen, FolderKanban, Mail } from 'lucide-react';
 
 const PORTFOLIO_URL = 'https://portfolio-ngocsondn.vercel.app/';
 
-export default function Hero({ setActiveTab }) {
+export default function Home() {
   const { language } = useApp();
 
   const quickLinks = [
     {
-      id: 'projects',
+      path: '/projects',
       icon: <FolderKanban size={20} />,
       label: language === 'vi' ? 'Dự Án' : 'Projects',
       desc: language === 'vi' ? 'Case study thực tế' : 'Real-world case studies',
     },
     {
-      id: 'blog',
+      path: '/blog',
       icon: <BookOpen size={20} />,
       label: language === 'vi' ? 'Bài Viết' : 'Blog',
       desc: language === 'vi' ? 'Ghi chép kỹ thuật' : 'Technical writings',
     },
     {
-      id: 'contact',
+      path: '/contact',
       icon: <Mail size={20} />,
       label: language === 'vi' ? 'Liên Hệ' : 'Contact',
       desc: language === 'vi' ? 'Kết nối với tôi' : 'Get in touch',
@@ -140,9 +141,9 @@ export default function Hero({ setActiveTab }) {
         }}
       >
         {quickLinks.map((link) => (
-          <button
-            key={link.id}
-            onClick={() => setActiveTab(link.id)}
+          <Link
+            key={link.path}
+            to={link.path}
             className="glass-panel"
             style={{
               flex: '1 1 160px',
@@ -156,6 +157,7 @@ export default function Hero({ setActiveTab }) {
               cursor: 'pointer',
               background: 'none',
               color: 'var(--text-primary)',
+              textDecoration: 'none',
               transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
             }}
             onMouseEnter={(e) => {
@@ -170,7 +172,7 @@ export default function Hero({ setActiveTab }) {
             <span style={{ color: 'var(--accent-primary)' }}>{link.icon}</span>
             <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{link.label}</span>
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{link.desc}</span>
-          </button>
+          </Link>
         ))}
       </div>
 

@@ -1,55 +1,30 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { translations } from '../data/translations';
+import { useLocalStorageState } from '../hooks/useLocalStorageState';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // Language State
-  const [language, setLanguage] = useState(() => {
-    const savedLang = localStorage.getItem('blog_lang');
-    return savedLang === 'en' ? 'en' : 'vi';
+  const [language, setLanguage] = useLocalStorageState('blog_lang', 'vi', {
+    validate: (saved, fallback) => (saved === 'en' ? 'en' : fallback),
   });
 
-  // Theme State (Default to Dark Mode for premium feel)
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('blog_theme');
-    return savedTheme === 'light' ? 'light' : 'dark';
+  const [theme, setTheme] = useLocalStorageState('blog_theme', 'dark', {
+    validate: (saved, fallback) => (saved === 'light' ? 'light' : fallback),
   });
 
-  // Handle language change
-  const toggleLanguage = () => {
-    setLanguage((prev) => {
-      const next = prev === 'vi' ? 'en' : 'vi';
-      localStorage.setItem('blog_lang', next);
-      return next;
-    });
-  };
+  const toggleLanguage = () => setLanguage((prev) => (prev === 'vi' ? 'en' : 'vi'));
+  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
 
-  // Handle theme change
-  const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('blog_theme', next);
-      return next;
-    });
-  };
-
-  // Apply theme class to document body/html
+  // Apply theme class to document root
   useEffect(() => {
     const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.remove('light');
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-    }
+    root.classList.remove(theme === 'dark' ? 'light' : 'dark');
+    root.classList.add(theme);
   }, [theme]);
 
   // Translation function
-  const t = (key) => {
-    return translations[language][key] || key;
-  };
+  const t = (key) => translations[language][key] || key;
 
   return (
     <AppContext.Provider value={{ language, toggleLanguage, theme, toggleTheme, t }}>
