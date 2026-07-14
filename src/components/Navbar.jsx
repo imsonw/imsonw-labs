@@ -146,7 +146,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
 
       {/* Mobile Drawer menu */}
       {isOpen && (
-        <div className="mobile-drawer glass-panel no-print" style={{
+        <div className="mobile-drawer no-print" style={{
           position: 'absolute',
           top: '4.5rem',
           left: '0',
@@ -156,8 +156,11 @@ export default function Navbar({ activeTab, setActiveTab }) {
           flexDirection: 'column',
           gap: '1.25rem',
           borderRadius: '16px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
           border: '1px solid var(--border-color)',
+          backgroundColor: 'var(--bg-secondary)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
         }}>
           <ul style={{ display: 'flex', flexDirection: 'column', listStyle: 'none', gap: '1rem', margin: 0, padding: 0 }}>
             {navItems.map((item) => (

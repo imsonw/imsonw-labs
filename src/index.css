@@ -208,7 +208,8 @@ button, input, textarea {
 }
 
 .section {
-  padding: 6rem 0 4rem;
+  padding-top: 6rem;
+  padding-bottom: 4rem;
 }
 
 /* Flex & Grid layouts */
@@ -233,7 +234,8 @@ button, input, textarea {
     gap: 2rem;
   }
   .section {
-    padding: 4rem 0 2rem;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
   }
 }
 

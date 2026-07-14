@@ -1,182 +1,184 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { ArrowRight, ChevronRight, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ExternalLink, BookOpen, FolderKanban, Mail } from 'lucide-react';
+
+const PORTFOLIO_URL = 'https://portfolio-ngocsondn.vercel.app/';
 
 export default function Hero({ setActiveTab }) {
-  const { t } = useApp();
+  const { language } = useApp();
 
-  const stats = [
-    { value: '3+', label: t('heroStatsProjects') },
-    { value: '6+', label: t('heroStatsExp') },
-    { value: '+40%', label: t('heroStatsImpact') },
+  const quickLinks = [
+    {
+      id: 'projects',
+      icon: <FolderKanban size={20} />,
+      label: language === 'vi' ? 'Dự Án' : 'Projects',
+      desc: language === 'vi' ? 'Case study thực tế' : 'Real-world case studies',
+    },
+    {
+      id: 'blog',
+      icon: <BookOpen size={20} />,
+      label: language === 'vi' ? 'Bài Viết' : 'Blog',
+      desc: language === 'vi' ? 'Ghi chép kỹ thuật' : 'Technical writings',
+    },
+    {
+      id: 'contact',
+      icon: <Mail size={20} />,
+      label: language === 'vi' ? 'Liên Hệ' : 'Contact',
+      desc: language === 'vi' ? 'Kết nối với tôi' : 'Get in touch',
+    },
   ];
 
   return (
-    <section className="section container" style={{
-      minHeight: '85vh',
-      display: 'flex',
-      alignItems: 'center',
-      paddingTop: '8rem',
-    }}>
-      <div className="grid-2" style={{ alignItems: 'center', width: '100%' }}>
-        
-        {/* Left Side: Copy and Stats */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          
-          {/* Welcome Tag */}
-          <div style={{ display: 'inline-flex', alignSelf: 'flex-start' }}>
-            <span className="badge" style={{ fontSize: '0.85rem', gap: '0.5rem', padding: '0.4rem 1rem' }}>
-              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-secondary)', animation: 'pulse 2s infinite' }}></span>
-              Open to new opportunities
-            </span>
-          </div>
+    <section
+      className="section container"
+      style={{
+        minHeight: '85vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: '8rem',
+        textAlign: 'center',
+        gap: '2.5rem',
+      }}
+    >
+      {/* Brand heading */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <span
+          className="badge"
+          style={{ fontSize: '0.85rem', gap: '0.5rem', padding: '0.4rem 1.1rem' }}
+        >
+          <span
+            style={{
+              display: 'inline-block',
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--accent-secondary)',
+              animation: 'pulse 2s infinite',
+            }}
+          />
+          {language === 'vi' ? 'Sẵn sàng hợp tác' : 'Open to opportunities'}
+        </span>
 
-          {/* Heading */}
-          <div>
-            <span style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
-              {t('heroTitle')}
-            </span>
-            <h1 style={{ fontSize: '3.5rem', lineHeight: '1.1', margin: '0.5rem 0 1rem 0' }}>
-              <span className="gradient-text" style={{ fontSize: '4.2rem', display: 'block' }}>imsonw</span>
-              {t('heroRole')}
-            </h1>
-          </div>
+        <h1
+          style={{
+            fontSize: 'clamp(2.8rem, 6vw, 5rem)',
+            lineHeight: '1.08',
+            margin: 0,
+            letterSpacing: '-0.03em',
+          }}
+        >
+          <span className="gradient-text">imsonw</span>
+          <span
+            style={{
+              display: 'block',
+              fontSize: 'clamp(1rem, 2vw, 1.35rem)',
+              fontWeight: 500,
+              color: 'var(--text-secondary)',
+              letterSpacing: '0.01em',
+              marginTop: '0.5rem',
+            }}
+          >
+            -labs
+          </span>
+        </h1>
 
-          {/* Subtitle */}
-          <p style={{ 
-            fontSize: '1.15rem', 
-            color: 'var(--text-secondary)', 
-            maxWidth: '540px',
+        <p
+          style={{
+            fontSize: '1.05rem',
+            color: 'var(--text-secondary)',
+            maxWidth: '480px',
             lineHeight: '1.7',
-          }}>
-            {t('heroSubtitle')}
-          </p>
-
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }} className="no-print">
-            <button 
-              onClick={() => setActiveTab('projects')} 
-              className="btn btn-primary"
-            >
-              <span>{t('heroCTA_primary')}</span>
-              <ArrowRight size={18} />
-            </button>
-            <button 
-              onClick={() => setActiveTab('blog')} 
-              className="btn btn-secondary"
-            >
-              <span>{t('heroCTA_secondary')}</span>
-              <ChevronRight size={18} />
-            </button>
-          </div>
-
-          {/* Stats Section */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '2.5rem', 
-            marginTop: '2rem',
-            paddingTop: '2rem',
-            borderTop: '1px solid var(--border-color)',
-          }}>
-            {stats.map((stat, index) => (
-              <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className="gradient-text" style={{ 
-                  fontFamily: "'Outfit', sans-serif", 
-                  fontSize: '2.25rem', 
-                  fontWeight: 800,
-                  lineHeight: '1.2' 
-                }}>
-                  {stat.value}
-                </span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500, marginTop: '0.25rem' }}>
-                  {stat.label}
-                </span>
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Right Side: 3D Art Asset */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          position: 'relative' 
-        }}>
-          {/* Decorative glowing circles behind the image */}
-          <div style={{
-            position: 'absolute',
-            width: '320px',
-            height: '320px',
-            borderRadius: '50%',
-            background: 'var(--gradient-glow)',
-            filter: 'blur(30px)',
-            zIndex: 0,
-            opacity: 0.8
-          }}></div>
-
-          {/* Main Avatar / Asset Card */}
-          <div className="glass-panel" style={{
-            padding: '1.5rem',
-            borderRadius: '24px',
-            position: 'relative',
-            zIndex: 1,
-            maxWidth: '360px',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
-            border: '1px solid var(--glass-border)',
-            animation: 'float-card 6s ease-in-out infinite'
-          }}>
-            <img 
-              src="/avatar.png" 
-              alt="imsonw-labs Portfolio Asset" 
-              style={{
-                width: '100%',
-                borderRadius: '16px',
-                aspectRatio: '1',
-                objectFit: 'cover',
-                backgroundColor: 'var(--bg-tertiary)',
-              }}
-            />
-            
-            {/* Overlay tag displaying active status */}
-            <div className="glass-panel" style={{
-              position: 'absolute',
-              bottom: '2.5rem',
-              padding: '0.6rem 1.2rem',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              backgroundColor: 'rgba(10, 11, 16, 0.85)',
-              border: '1px solid var(--border-color)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
-            }}>
-              <CheckCircle2 size={16} color="var(--accent-secondary)" />
-              <span style={{ color: '#ffffff' }}>Technical PM & Architect</span>
-            </div>
-          </div>
-        </div>
-
+            margin: 0,
+          }}
+        >
+          {language === 'vi'
+            ? 'Nơi lưu trữ dự án, bài viết kỹ thuật và nghiên cứu của tôi.'
+            : 'A space for my projects, technical writings, and experiments.'}
+        </p>
       </div>
 
-      {/* Embedding animation keyframes */}
+      {/* Primary CTA — Portfolio link */}
+      <a
+        href={PORTFOLIO_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn btn-primary"
+        style={{ fontSize: '1rem', padding: '0.85rem 2rem', textDecoration: 'none' }}
+      >
+        <span>{language === 'vi' ? 'Xem Portfolio cá nhân' : 'Visit my Portfolio'}</span>
+        <ExternalLink size={18} />
+      </a>
+
+      {/* Divider */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          width: '100%',
+          maxWidth: '480px',
+          color: 'var(--text-muted)',
+          fontSize: '0.8rem',
+        }}
+      >
+        <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }} />
+        {language === 'vi' ? 'hoặc khám phá tại đây' : 'or explore here'}
+        <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }} />
+      </div>
+
+      {/* Quick nav cards */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          width: '100%',
+          maxWidth: '640px',
+        }}
+      >
+        {quickLinks.map((link) => (
+          <button
+            key={link.id}
+            onClick={() => setActiveTab(link.id)}
+            className="glass-panel"
+            style={{
+              flex: '1 1 160px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.6rem',
+              padding: '1.25rem 1rem',
+              border: '1px solid var(--border-color)',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              background: 'none',
+              color: 'var(--text-primary)',
+              transition: 'border-color var(--transition-fast), transform var(--transition-fast)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent-primary)';
+              e.currentTarget.style.transform = 'translateY(-3px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-color)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <span style={{ color: 'var(--accent-primary)' }}>{link.icon}</span>
+            <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{link.label}</span>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{link.desc}</span>
+          </button>
+        ))}
+      </div>
+
       <style>{`
         @keyframes pulse {
           0% { transform: scale(0.95); opacity: 0.5; }
           50% { transform: scale(1.1); opacity: 1; }
           100% { transform: scale(0.95); opacity: 0.5; }
-        }
-        @keyframes float-card {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-12px); }
-          100% { transform: translateY(0px); }
         }
       `}</style>
     </section>

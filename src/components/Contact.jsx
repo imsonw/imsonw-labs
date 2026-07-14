@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Mail, MapPin, Download, Send, CheckCircle } from 'lucide-react';
+import { Mail, MapPin, Phone, Download, Send, CheckCircle } from 'lucide-react';
 
 // Custom SVG Icons because some lucide versions do not export brand icons
 const Github = ({ size = 20, ...props }) => (
@@ -68,48 +68,74 @@ export default function Contact() {
     window.print();
   };
 
-  // Mock Resume Data
+  // Resume Data
   const resumeData = {
     skills: [
-      "Product Strategy & Roadmap",
-      "System Architecture (Kafka, Microservices)",
-      "AdTech & Optimization Algorithms",
-      "Fullstack Dev (React, Node.js, Go)",
-      "Agile/Scrum Leadership",
-      "API Integrations & Rate-limiting systems"
+      "iOS: Swift, SwiftUI, UIKit, Core Data/Location, ARKit",
+      "Flutter/Dart & React Native",
+      "State Management: BLoC, Riverpod, Redux, GetX",
+      "Clean Architecture, SOLID, Repository Pattern",
+      "Security: Keychain/Keystore, SSL Pinning, Encryption",
+      "AI/LLM: OpenAI, Gemini, Prompt Engineering"
     ],
     experience: [
       {
-        role: "Product & Technical Lead",
-        company: "AdTech Auto-Optimization Platform",
-        period: "2024 - Present",
+        role: "Mobile Developer",
+        company: "Webkom Studio",
+        period: "02/2025 - Present",
         bullets: {
           vi: [
-            "Quản lý roadmap sản phẩm và dẫn dắt đội ngũ 8 kỹ sư phát triển hệ thống tối ưu hóa quảng cáo TikTok Ads tự động.",
-            "Thiết kế hệ thống chẩn đoán 3 tầng giảm 92% tỷ lệ lỗi cuộc gọi API và giảm thời gian phát hiện sự cố từ 2h xuống dưới 3 phút.",
-            "Tích hợp và xây dựng module tạo video quảng cáo tự động bằng Generative AI, tăng CTR trung bình 40%."
+            "Thiết kế kiến trúc livestream RTMP đa nền tảng (TikTok, YouTube, Twitch) và thay Player WebView bằng module Native, loại bỏ nghẽn hiệu năng khi phát trực tiếp.",
+            "Xây dựng các luồng core e-commerce: giỏ hàng, thanh toán, flash sale và theo dõi đơn hàng."
           ],
           en: [
-            "Owned the product roadmap and led 8 engineers building high-scale automated TikTok Ads optimization dashboards.",
-            "Designed a 3-tier diagnostics layer decreasing API rate-limits by 92% and cutting issue detection time from 2h to under 3m.",
-            "Launched GenAI automated video rendering pipelines, boosting CTR by 40% for e-commerce customers."
+            "Architected a multi-platform RTMP livestream pipeline (TikTok, YouTube, Twitch) and replaced the WebView player with a native module, removing production streaming bottlenecks.",
+            "Built core e-commerce flows including cart, checkout, flash sales, and order tracking."
           ]
         }
       },
       {
-        role: "Technical Lead / Senior Developer",
-        company: "E-Commerce Solution Provider",
-        period: "2021 - 2024",
+        role: "Mobile Developer",
+        company: "Soteco",
+        period: "09/2023 - 01/2025",
         bullets: {
           vi: [
-            "Xây dựng hạ tầng thanh toán tín dụng doanh nghiệp (Billing Ledger) xử lý hơn $2M giao dịch/tháng với cơ chế Event Sourcing.",
-            "Tối ưu hóa các API đồng bộ dữ liệu sản phẩm, giảm độ trễ phản hồi từ 1.2s xuống còn 80ms.",
-            "Dẫn dắt chuyển dịch hạ tầng từ monolithic sang microservices sử dụng Docker, Kubernetes và RabbitMQ."
+            "Chuyển dịch kiến trúc từ GetX sang BLoC/Riverpod theo chuẩn Clean Architecture & SOLID, giảm 30% tỷ lệ lỗi.",
+            "Tích hợp OpenAI & Gemini API xây dựng chatbot/tìm kiếm thông minh, duy trì độ phủ test trên 70%."
           ],
           en: [
-            "Built a credit billing ledger handling $2M+ monthly transaction volume using Event Sourcing design patterns.",
-            "Optimized inventory sync endpoints, lowering latency thresholds from 1.2s to 80ms under high load.",
-            "Guided structural migration of monolithic architecture into Dockerized microservices using Kubernetes & RabbitMQ."
+            "Migrated architecture from GetX to BLoC/Riverpod under Clean Architecture & SOLID, cutting the bug rate by 30%.",
+            "Integrated OpenAI & Gemini APIs to build smart search and chatbot features, maintaining 70%+ test coverage."
+          ]
+        }
+      },
+      {
+        role: "Mobile Developer",
+        company: "Hill Tech",
+        period: "06/2021 - 08/2023",
+        bullets: {
+          vi: [
+            "Phát triển ví blockchain phi tập trung theo mô hình Super App/Mini App trên Flutter & React Native.",
+            "Xây dựng module Native xác thực chữ ký số, ngăn chặn Mini App bị giả mạo trước khi thực thi."
+          ],
+          en: [
+            "Built a decentralized blockchain wallet using a Super App/Mini App architecture on Flutter & React Native.",
+            "Developed a native signature-verification module blocking tampered Mini Apps before execution."
+          ]
+        }
+      },
+      {
+        role: "iOS Developer",
+        company: "Axon Active Vietnam",
+        period: "06/2018 - 05/2021",
+        bullets: {
+          vi: [
+            "Xây dựng ứng dụng du lịch & bản đồ Native iOS (Swift/UIKit) cho thị trường Thụy Sĩ, tích hợp Core Location, MapKit, ARKit.",
+            "Loại bỏ rò rỉ bộ nhớ và tối ưu hiệu năng bằng Xcode Instruments."
+          ],
+          en: [
+            "Built native iOS travel & navigation apps (Swift/UIKit) for the Swiss market, integrating Core Location, MapKit, and ARKit.",
+            "Eliminated memory leaks and optimized performance using Xcode Instruments."
           ]
         }
       }
@@ -244,7 +270,17 @@ export default function Contact() {
                 </div>
                 <div>
                   <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>Email</span>
-                  <a href="mailto:contact@imsonw.dev" style={{ fontWeight: 500, fontSize: '0.95rem' }}>contact@imsonw.dev</a>
+                  <a href="mailto:ngocsoncmu@gmail.com" style={{ fontWeight: 500, fontSize: '0.95rem' }}>ngocsoncmu@gmail.com</a>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-secondary)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--badge-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)' }}>
+                  <Phone size={18} />
+                </div>
+                <div>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>Phone</span>
+                  <a href="tel:+84397442858" style={{ fontWeight: 500, fontSize: '0.95rem' }}>0397.442.858</a>
                 </div>
               </div>
 
@@ -254,7 +290,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('contactLocation')}</span>
-                  <span style={{ fontWeight: 500, fontSize: '0.95rem', color: 'var(--text-primary)' }}>Ho Chi Minh City, Vietnam</span>
+                  <span style={{ fontWeight: 500, fontSize: '0.95rem', color: 'var(--text-primary)' }}>Da Nang, Vietnam</span>
                 </div>
               </div>
             </div>
@@ -300,16 +336,16 @@ export default function Contact() {
         {/* CV Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid var(--accent-primary)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
           <div>
-            <h1 style={{ fontSize: '2.5rem', margin: 0 }}>IMSONW</h1>
-            <h3 style={{ color: 'var(--accent-primary)', fontWeight: 600, marginTop: '0.25rem' }}>Product & Technical Lead</h3>
+            <h1 style={{ fontSize: '2.5rem', margin: 0 }}>NGUYEN NGOC SON</h1>
+            <h3 style={{ color: 'var(--accent-primary)', fontWeight: 600, marginTop: '0.25rem' }}>Mobile Developer</h3>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'block', marginTop: '0.5rem' }}>
-              Ho Chi Minh City, Vietnam | contact@imsonw.dev | +84 900 000 000
+              Da Nang, Vietnam | ngocsoncmu@gmail.com | 0397.442.858
             </span>
           </div>
           <div style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            <span>LinkedIn: linkedin.com/in/imsonw</span><br />
-            <span>GitHub: github.com/imsonw</span><br />
-            <span>Website: imsonw.dev</span>
+            <span>Bachelor's Degree, Computer Science</span><br />
+            <span>Software Engineering, GPA 3.19/4</span><br />
+            <span>10/2014 - 03/2018</span>
           </div>
         </div>
 
@@ -322,7 +358,7 @@ export default function Contact() {
               Professional Summary
             </h4>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6' }}>
-              Experienced Product & Technical PM with a strong engineering background. Specialized in building, architecting, and operating high-scale advertising optimization, credit billing ledger, and SaaS software. Proven ability to bridge the gap between engineering execution and product growth.
+              Mobile Developer with 8+ years across iOS (Swift/SwiftUI), Flutter, and React Native, delivering cross-platform apps end-to-end — from architecture to App Store publishing — for startups and international clients. Strong in Clean Architecture, state management, and AI/API integration, with experience mentoring junior developers in remote, cross-cultural Agile teams.
             </p>
           </div>
 

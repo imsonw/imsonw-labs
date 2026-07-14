@@ -1,97 +1,97 @@
 export const projects = [
   {
-    id: "smart-campaign-diagnostics",
+    id: "livestream-rtmp-architecture",
     category: "tech", // 'product' or 'tech'
-    tags: ["Product Strategy", "System Architecture", "AdTech"],
+    tags: ["Flutter", "Native Modules", "Livestream"],
     title: {
-      vi: "Hệ thống Chẩn đoán Chiến dịch Quảng cáo 3 tầng",
-      en: "Three-Tier Ad Campaign Diagnostic System"
+      vi: "Kiến trúc Livestream Bán hàng Đa nền tảng (RTMP)",
+      en: "Multi-Platform Livestream Shopping Architecture (RTMP)"
     },
     subtitle: {
-      vi: "Giải quyết bài toán tối ưu quảng cáo TikTok Ads tự động với độ trễ thấp.",
-      en: "Solving real-time auto-optimization for high-scale TikTok Ads campaigns."
+      vi: "Xây dựng hạ tầng livestream ổn định, phát đồng thời lên TikTok, YouTube, Twitch cho app thương mại điện tử thị trường Đức.",
+      en: "Building a stable livestream pipeline that simultaneously restreams to TikTok, YouTube, and Twitch for a German e-commerce app."
     },
     metrics: {
-      vi: "Tăng 25% ROI, Giảm 40% Thời gian tìm lỗi",
-      en: "+25% ROI, -40% Issue Resolution Time"
+      vi: "Loại bỏ nghẽn WebView, Giảm rõ rệt độ trễ & giật hình",
+      en: "Removed WebView bottleneck, Major reduction in latency & stutter"
     },
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop",
     details: {
       vi: {
-        context: "Nền tảng chạy quảng cáo tự động TikTok Ads Smart+ thường xuyên gặp tình trạng tụt phân phối hoặc chi tiêu không hiệu quả mà không rõ nguyên nhân. Nhà bán hàng cần biết chính xác lỗi nằm ở đâu (tài khoản, nhóm quảng cáo hay nội dung sáng tạo) để tối ưu ngay lập tức.",
-        problem: "Mỗi giây trôi qua mà không phát hiện lỗi gây lãng phí hàng ngàn USD ngân sách quảng cáo. Các hệ thống chẩn đoán cũ chạy dạng batch-job định kỳ 2 tiếng, quá chậm để ứng phó với biến động real-time của TikTok. Hơn nữa, việc tích hợp API trực tiếp từ TikTok dễ bị nghẽn (rate-limit).",
-        solution: "Thiết kế hệ thống chẩn đoán 3 tầng (Account -> Campaign -> Creative):\n1. Tầng Thu Thập Cận Real-time: Sử dụng hàng đợi Kafka và cơ chế Webhook để nhận tín hiệu thay đổi trạng thái quảng cáo ngay lập tức.\n2. Tầng Engine Phân Tích: Áp dụng tập luật (Rules engine) được tối ưu hóa, cô lập logic nghiệp vụ quảng cáo tách biệt với tầng kết nối API.\n3. Tầng Hiển Thị (UI): Dashboard trực quan hóa sơ đồ cây lỗi, đưa ra đề xuất hành động cụ thể cho nhà quảng cáo.",
-        result: "Hệ thống giảm thời gian phát hiện và cảnh báo lỗi từ 2 giờ xuống còn 3 phút. Giúp khách hàng giảm 18% chi phí lãng phí do lỗi cài đặt, đồng thời giảm tải số lượng request gọi trực tiếp lên TikTok API nhờ cơ chế caching thông minh ở tầng Adapter."
+        context: "Ứng dụng thương mại điện tử kết hợp livestream bán hàng cho thị trường Đức cần phát sóng đồng thời lên nhiều nền tảng mạng xã hội, trong khi vẫn giữ đồng bộ chat theo thời gian thực.",
+        problem: "Player livestream ban đầu dùng WebView gây tải chậm, giật hình và tốn tài nguyên thiết bị. Việc restream đồng thời tới nhiều nền tảng cũng dễ gây nghẽn băng thông và mất đồng bộ.",
+        solution: "Can thiệp (patch) plugin camera của Flutter để phát RTMP trực tiếp, tích hợp Castr làm media server chuyển mã HLS cho việc restream. Thay Player WebView bằng module Native iOS/Android (Flutter platform channel) load và phát stream trực tiếp, đồng bộ chat qua Firebase Realtime Database.",
+        result: "Loại bỏ hoàn toàn overhead của WebView, giảm mạnh thời gian tải và tình trạng giật hình khi phát trực tiếp trong môi trường production, đồng thời phát sóng ổn định song song trên 3 nền tảng."
       },
       en: {
-        context: "The automated TikTok Smart+ campaign optimization platform frequently faced drop-offs in delivery or cost-inefficiency without clear explanations. Advertisers needed to pinpoint issues (account status, ad group configs, or creative elements) instantly to apply changes.",
-        problem: "Every second with an undetected issue wasted thousands of dollars in ad budget. Legacy diagnostic jobs ran as batch jobs every 2 hours, which was too slow. Additionally, direct integrations with TikTok APIs were prone to rate-limiting bottlenecks.",
-        solution: "Designed and led the engineering of a 3-tier diagnostic framework:\n1. Near Real-time Ingestion Layer: Built on Kafka and webhook listeners to capture ad state changes on the fly.\n2. Rules Engine Layer: Created an decoupled rule engine, keeping business rules independent from third-party API integration code.\n3. Visual Analytics Layer: An interactive diagnostic tree showing direct problem nodes with recommended fixes.",
-        result: "Reduced average detection time from 2 hours to under 3 minutes. Saved advertisers 18% in waste ad spend due to misconfiguration, and decreased overall TikTok API request volume by caching intermediate states in an Adapter layer."
+        context: "A livestream-shopping e-commerce app for the German market needed to broadcast simultaneously across multiple social platforms while keeping chat perfectly in sync in real time.",
+        problem: "The original WebView-based livestream player caused slow loading, stuttering, and heavy device resource usage. Restreaming to multiple platforms at once also risked bandwidth bottlenecks and desync.",
+        solution: "Patched Flutter's camera plugin to broadcast RTMP directly and integrated Castr as the media server for HLS transcoding. Replaced the WebView player with a native iOS/Android module (Flutter platform channel) that loads and plays the stream directly, syncing chat via Firebase Realtime Database.",
+        result: "Completely eliminated WebView overhead, drastically reducing load times and stuttering in production, while streaming smoothly and simultaneously across all 3 platforms."
       }
     }
   },
   {
-    id: "credits-monetization-engine",
+    id: "clean-architecture-ai-assistant",
     category: "product",
-    tags: ["Microservices", "Fintech / Billing", "Product Operations"],
+    tags: ["Clean Architecture", "State Management", "AI Integration"],
     title: {
-      vi: "Hệ thống Monetization & Ví Tín dụng Doanh nghiệp",
-      en: "Enterprise Credit-Based Billing & Monetization Engine"
+      vi: "Tái cấu trúc Clean Architecture & Tích hợp Trợ lý AI",
+      en: "Clean Architecture Migration & AI Assistant Integration"
     },
     subtitle: {
-      vi: "Xây dựng core billing và hệ thống thanh toán tự động cho nền tảng SaaS.",
-      en: "Re-architecting core billing and automated credit system for a high-growth SaaS."
+      vi: "Chuyển đổi từ GetX sang BLoC/Riverpod và xây dựng chatbot tìm kiếm thông minh cho hệ sinh thái tin tức thể thao & mini-game.",
+      en: "Migrating from GetX to BLoC/Riverpod and building a smart search chatbot for a sports news & casual games ecosystem."
     },
     metrics: {
-      vi: "Xử lý $2M+ giao dịch mỗi tháng, Sai sót 0%",
-      en: "$2M+ Monthly Transaction Volume, 0% Discrepancy"
+      vi: "Giảm 30% tỷ lệ lỗi, Duy trì 70%+ độ phủ test",
+      en: "-30% Bug Rate, 70%+ Test Coverage Maintained"
     },
-    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
     details: {
       vi: {
-        context: "Nền tảng ban đầu sử dụng cơ chế trả phí hàng tháng cố định, không phản ánh đúng mức độ sử dụng tài nguyên hệ thống (như API calls, AI video generation) của từng khách hàng, làm tăng chi phí vận hành hạ tầng.",
-        problem: "Cần xây dựng hệ thống nạp tiền và trừ ví tín dụng (credits) theo thời gian thực để hỗ trợ thanh toán pay-as-you-go, yêu cầu tính nhất quán cao (ACID) để tránh thất thoát tiền bạc, đồng thời phải đảm bảo không ảnh hưởng đến tốc độ của luồng nghiệp vụ chính.",
-        solution: "Đóng vai trò Product Lead hợp tác cùng Tech Lead để triển khai:\n1. Chuyển đổi mô hình định giá sang Credit-based với đơn vị tiền ảo tiêu chuẩn.\n2. Xây dựng dịch vụ Billing chuyên biệt (decoupled ledger) sử dụng cơ chế Event Sourcing để ghi nhận mọi biến động tài khoản.\n3. Thiết kế hệ thống cảnh báo tự động khi số dư ví của khách hàng xuống dưới ngưỡng tối thiểu.",
-        result: "Hệ thống đi vào hoạt động ổn định giúp tăng doanh thu trung bình trên mỗi khách hàng (ARPU) thêm 32%, giảm 15% chi phí hạ tầng lãng phí cho các tài khoản không hoạt động nhưng vẫn tiêu tốn tài nguyên chạy ngầm."
+        context: "Hệ sinh thái gồm nhiều ứng dụng tin tức thể thao, bảng xếp hạng và game giải trí đang gặp khó khăn trong bảo trì do kiến trúc module rời rạc và cách quản lý state thiếu nhất quán.",
+        problem: "Việc dùng GetX thiếu ràng buộc rõ ràng khiến logic nghiệp vụ trộn lẫn với UI, gây khó khăn khi viết test và khi mở rộng tính năng tìm kiếm thông minh bằng AI.",
+        solution: "Chuyển dịch dần các module sang BLoC/Riverpod theo nguyên tắc Clean Architecture và SOLID. Tích hợp OpenAI & Gemini API xây dựng tính năng tìm kiếm và chatbot hỗ trợ, tự quản lý prompt engineering và parsing kết quả; song song viết Unit/Widget test với flutter_test và mockito.",
+        result: "Giảm 30% tỷ lệ lỗi phát sinh sau khi tái cấu trúc, duy trì độ phủ test trên 70%, đồng thời cải thiện thời gian khởi động ứng dụng nhờ profiling bằng Flutter DevTools."
       },
       en: {
-        context: "The platform originally used a flat-rate monthly subscription, which didn't scale with actual resource consumption (such as API calls, AI video generation credits), driving up infrastructure overhead.",
-        problem: "Needed a real-time ledger to handle credit deposits and deductions. It demanded strict ACID transaction guarantees to prevent financial discrepancies, while avoiding performance overhead on the core optimization routines.",
-        solution: "Collaborated as Product Lead with engineering team to implement:\n1. Value-based pricing transformation based on standard platform credits.\n2. Designed an decoupled ledger service using Event Sourcing for auditability and high consistency.\n3. Implemented a auto-top-up and near-empty threshold alerting system.",
-        result: "Billing engine successfully launched, driving Average Revenue Per User (ARPU) up by 32%. Reduced infrastructure cost overhead by 15% through scaling resources directly alongside active credit consumption."
+        context: "An ecosystem of sports news, leaderboard, and casual game apps was becoming hard to maintain due to fragmented module architecture and inconsistent state management.",
+        problem: "GetX's loose structure let business logic leak into the UI layer, making it hard to write tests or extend the app with AI-powered smart search.",
+        solution: "Gradually migrated modules to BLoC/Riverpod under Clean Architecture and SOLID principles. Integrated OpenAI & Gemini APIs to build smart search and chatbot assistant features, handling custom prompt engineering and response parsing, alongside Unit/Widget tests using flutter_test and mockito.",
+        result: "Cut the post-refactor bug rate by 30%, maintained 70%+ test coverage, and improved app startup time after profiling with Flutter DevTools."
       }
     }
   },
   {
-    id: "ai-video-creative-gen",
-    category: "product",
-    tags: ["Gen AI", "Video Processing", "SaaS Growth"],
+    id: "secure-miniapp-distribution",
+    category: "tech",
+    tags: ["Security", "Blockchain", "Native Modules"],
     title: {
-      vi: "Công cụ Tự động Hóa Sản xuất Video Quảng cáo bằng AI",
-      en: "AI-Powered Automated Video Creative Generator"
+      vi: "Cơ chế Phân phối Mini App An toàn cho Ví Blockchain",
+      en: "Secure Mini App Distribution for a Blockchain Wallet"
     },
     subtitle: {
-      vi: "Sử dụng AI tạo hàng loạt video quảng cáo TikTok chất lượng cao từ link sản phẩm.",
-      en: "Generating bulk high-performing TikTok ad creatives from product links using GenAI."
+      vi: "Xây dựng module Native xác thực chữ ký số, ngăn chặn Mini App bị giả mạo trong hệ sinh thái Super App.",
+      en: "Building a native signature-verification module to block tampered Mini Apps inside a Super App ecosystem."
     },
     metrics: {
-      vi: "Sản xuất 10,000+ video/ngày, Click-Through-Rate tăng 40%",
-      en: "10,000+ Videos Daily, +40% Average Click-Through Rate"
+      vi: "Chặn 100% gói Mini App bị giả mạo trước khi thực thi",
+      en: "Blocks 100% of tampered Mini App bundles before execution"
     },
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=800&auto=format&fit=crop",
     details: {
       vi: {
-        context: "Trong quảng cáo TikTok, 'creative fatigue' (quảng cáo bị nhàm chán) diễn ra cực nhanh (chỉ từ 3-5 ngày). Các đội ngũ e-commerce thường xuyên thiếu hụt video mới chất lượng để duy trì hiệu quả quảng cáo.",
-        problem: "Thuê Agency sản xuất video rất đắt đỏ và tốn thời gian (2-3 ngày/video). Các công cụ AI hiện tại chỉ tập trung vào việc tạo ảnh hoặc viết text, thiếu khả năng ghép thành video có cấu trúc kịch bản chuyển đổi cao.",
-        solution: "Phát triển tính năng AI Video Generator ngay trên nền tảng:\n1. Kịch bản hóa: Hệ thống phân tích link sản phẩm, tự động bóc tách USP (Unique Selling Points), tạo kịch bản 3 phần (Hook -> Body -> CTA).\n2. Video Engine: Tích hợp với dịch vụ chuyển văn bản thành giọng nói (TTS) tiếng Việt/Anh và tự động chèn clip sản phẩm nền, hiệu ứng chữ chạy theo nhịp nhạc.\n3. A/B Testing: Tự động nhân bản nhiều phiên bản có Hook khác nhau để tối ưu chiến dịch.",
-        result: "Giảm thời gian tạo video từ vài ngày xuống còn 60 giây. Đã có hơn 100,000 video được tạo lập, mang lại tỷ lệ nhấp chuột (CTR) trung bình cao hơn 40% so với các video tĩnh trước đó nhờ khả năng tạo Hook ấn tượng."
+        context: "Ví blockchain phi tập trung triển khai mô hình Super App / Mini App, cho phép tải các Mini App bên thứ ba — tiềm ẩn nguy cơ Mini App bị chèn mã độc hoặc thay đổi trái phép.",
+        problem: "Cần đảm bảo mọi gói Mini App tải về đều nguyên vẹn và đến từ nguồn tin cậy trước khi cho phép chạy, mà không làm chậm trải nghiệm người dùng.",
+        solution: "Xây dựng module Native iOS/Android (Flutter platform channel) tự động tải, giải nén và xác thực chữ ký số bất đối xứng (cặp khóa public/private) kèm kiểm tra checksum cho từng gói Mini App trước khi thực thi; bảo vệ dữ liệu nhạy cảm bằng Keychain/Keystore và SSL Pinning chống tấn công man-in-the-middle.",
+        result: "Ngăn chặn hoàn toàn các gói Mini App bị giả mạo hoặc chèn mã độc trước khi thực thi, củng cố độ tin cậy bảo mật cho toàn bộ hệ sinh thái ví."
       },
       en: {
-        context: "TikTok advertising suffers from rapid creative fatigue (usually within 3 to 5 days). E-commerce advertisers struggled to constantly design new video creatives to keep their campaigns profitable.",
-        problem: "Hiring agencies for video production is costly and slow. Existing AI tools generated static images or ad copies, lacking the capacity to stitch dynamic assets into high-converting video structures.",
-        solution: "Spearheaded the development of a productized AI Video Generator:\n1. Ad Scripting: Extracted product USPs from raw URLs and formatted them into a 3-part marketing script (Hook, Body, Call to Action).\n2. Automated Video Compositing: Integrated Text-to-Speech engines, backing tracks, dynamic subtitle overlays, and smart asset cropping.\n3. Automatic Variation: Rendered 5 variable 'Hook' variations per asset to facilitate easy A/B testing.",
-        result: "Shortened creative creation workflow from days to under 60 seconds. Generated over 100,000 active videos, boosting average CTR by 40% compared to baseline static ad assets."
+        context: "A decentralized blockchain wallet adopted a Super App / Mini App model, allowing third-party Mini Apps to be downloaded — creating a risk of tampered or maliciously injected packages.",
+        problem: "Every downloaded Mini App bundle needed to be verified as intact and from a trusted source before execution, without slowing down the user experience.",
+        solution: "Built a native iOS/Android module (Flutter platform channel) that automatically downloads, unzips, and cryptographically verifies each Mini App bundle using asymmetric signature verification (public/private key pair) with checksum validation before execution; protected sensitive data with Keychain/Keystore and SSL Pinning against man-in-the-middle attacks.",
+        result: "Completely blocked tampered or maliciously injected Mini App bundles from running, strengthening security trust across the entire wallet ecosystem."
       }
     }
   }

@@ -1,5 +1,579 @@
 export const posts = [
   {
+    id: "clean-architecture-guide",
+    category: "Software Engineering",
+    tags: ["Clean Architecture", "Design Patterns", "TypeScript"],
+    date: "2026-07-14",
+    readTime: 10,
+    title: {
+      vi: "Cẩm Nang Tinh Gọn: Clean Architecture Cho Mọi Dự Án",
+      en: "The Lean Handbook: Clean Architecture for Any Project"
+    },
+    summary: {
+      vi: "Bản đồ 3 tầng Domain - Data - Presentation, cấu trúc thư mục chuẩn, và ví dụ thực chiến từng dòng code cho tính năng 'Tạo công việc'.",
+      en: "The 3-layer Domain - Data - Presentation map, a standard folder structure, and a line-by-line real-world example building a 'Create Task' feature."
+    },
+    content: {
+      vi: [
+        { type: "paragraph", text: "Clean Architecture (Kiến trúc sạch) sinh ra để giải quyết một vấn đề duy nhất: bảo vệ lõi nghiệp vụ của ứng dụng khỏi sự thay đổi của công nghệ bên ngoài — Database, UI, Framework mạng." },
+        { type: "quote", text: "Quy tắc duy nhất cần nhớ: Mũi tên phụ thuộc luôn chỉ vào trong. Lớp ngoài biết lớp trong, nhưng lớp trong tuyệt đối KHÔNG được biết lớp ngoài." },
+
+        { type: "heading", text: "1. Bản đồ 3 tầng kiến trúc" },
+        { type: "paragraph", text: "Thay vì chia theo kiểu MVC lộn xộn, Clean Architecture chia code ứng dụng thành 3 tầng rõ rệt, mỗi tầng chỉ đảm nhiệm đúng một vai trò:" },
+        { type: "list", items: [
+          "Domain (Tầng Lõi) — trái tim của ứng dụng, chứa các quy tắc nghiệp vụ: Entity (mô hình lõi), UseCase (hành động), Repository Interface (hợp đồng dữ liệu). Tuyệt đối không chứa code của framework (không import React, Vue, Express, driver SQL...).",
+          "Data (Tầng Dữ Liệu) — người vận chuyển, lấy dữ liệu từ bên ngoài, nhào nặn rồi đưa vào lõi: DTO (model của API/DB), DataSource (gọi API/DB), Repository Impl (thực thi hợp đồng).",
+          "Presentation (Tầng Giao Diện) — tương tác với người dùng: View (UI), ViewModel/Controller (xử lý logic hiển thị)."
+        ] },
+
+        { type: "heading", text: "2. Cấu trúc thư mục tiêu chuẩn" },
+        { type: "paragraph", text: "Tổ chức thư mục theo tính năng (Feature-based) thay vì theo loại file giúp dự án cực kỳ dễ tìm kiếm và mở rộng:" },
+        { type: "code", language: "text", code: `src/
+└── features/
+    └── task/ (Tính năng: Quản lý công việc)
+        ├── domain/
+        │   ├── Task.entity.ts
+        │   ├── TaskRepository.interface.ts
+        │   └── CreateTask.usecase.ts
+        ├── data/
+        │   ├── Task.dto.ts
+        │   ├── Task.datasource.ts
+        │   └── TaskRepository.impl.ts
+        └── presentation/
+            ├── Task.view.tsx
+            └── Task.viewmodel.ts` },
+
+        { type: "heading", text: "3. Ví dụ thực chiến: tính năng 'Tạo công việc (Task)'" },
+        { type: "paragraph", text: "Hãy xem dữ liệu chảy qua 3 tầng như thế nào khi người dùng tạo một Task mới." },
+
+        { type: "heading", text: "Tầng 1: Domain — chỉ chứa logic thuần" },
+        { type: "paragraph", text: "Định nghĩa mô hình chuẩn và hợp đồng lưu trữ, không phụ thuộc bất kỳ thư viện bên ngoài nào." },
+        { type: "code", language: "typescript", code: `// 1. Entity: Dữ liệu sạch + Luật kiểm tra
+export class TaskEntity {
+    constructor(
+        public readonly id: string,
+        public title: string,
+        public isCompleted: boolean
+    ) {
+        if (title.trim() === "") throw new Error("Title không được để trống!");
+    }
+}
+
+// 2. Repository Interface: Chỉ quy định hàm, không quan tâm lưu ở đâu
+export interface ITaskRepository {
+    saveTask(task: TaskEntity): Promise<void>;
+}
+
+// 3. UseCase: Hành động tạo Task
+export class CreateTaskUseCase {
+    // Nhận Repository qua interface (Không bị dính chặt vào DB nào)
+    constructor(private repository: ITaskRepository) {}
+
+    async execute(id: string, title: string): Promise<TaskEntity> {
+        const newTask = new TaskEntity(id, title, false);
+        await this.repository.saveTask(newTask);
+        return newTask;
+    }
+}` },
+
+        { type: "heading", text: "Tầng 2: Data — giao tiếp Database & Mapping" },
+        { type: "paragraph", text: "Nhận JSON từ API/DB, gọt giũa dữ liệu, rồi trả về Entity sạch cho tầng Domain." },
+        { type: "code", language: "typescript", code: `// 1. DTO: Cấu trúc thật của DB (Có thể chứa các trường rác)
+export interface TaskDTO {
+    _id: string;
+    task_title: string;
+    status_code: number;
+}
+
+// 2. DataSource: Trực tiếp gọi DB (MongoDB, SQL...) hoặc gọi API
+export class TaskDataSource {
+    async insertToDB(dto: TaskDTO) {
+        // Code insert database thực tế ở đây...
+        console.log("Đã lưu vào DB:", dto);
+    }
+}
+
+// 3. Repository Impl: Thực thi hợp đồng của Domain
+export class TaskRepositoryImpl implements ITaskRepository {
+    constructor(private dataSource: TaskDataSource) {}
+
+    async saveTask(entity: TaskEntity): Promise<void> {
+        // MAPPING: Chuyển Entity sạch -> DTO thô để lưu DB
+        const dto: TaskDTO = {
+            _id: entity.id,
+            task_title: entity.title,
+            status_code: entity.isCompleted ? 1 : 0
+        };
+        await this.dataSource.insertToDB(dto);
+    }
+}` },
+
+        { type: "heading", text: "Tầng 3: Presentation — hiển thị UI" },
+        { type: "paragraph", text: "Lấy dữ liệu người dùng nhập, gọi UseCase xử lý, rồi cập nhật giao diện." },
+        { type: "code", language: "typescript", code: `export class TaskViewModel {
+    // Nhận UseCase
+    constructor(private createTaskUseCase: CreateTaskUseCase) {}
+
+    async onCreateButtonClicked(titleInput: string) {
+        try {
+            const newId = Math.random().toString();
+            // Gọi lõi nghiệp vụ
+            const resultEntity = await this.createTaskUseCase.execute(newId, titleInput);
+
+            // Format lại dữ liệu cho UI (UI Model)
+            const successMessage = \`Đã tạo thành công: \${resultEntity.title}\`;
+            alert(successMessage);
+        } catch (error) {
+            alert("Lỗi: " + error.message);
+        }
+    }
+}` },
+
+        { type: "heading", text: "4. Lắp ráp mọi thứ lại (Dependency Injection)" },
+        { type: "paragraph", text: "Đây là bước kết dính các tầng lại với nhau ở nơi khởi chạy ứng dụng (App.ts, Main.ts). Nó đi theo nguyên tắc: tạo tầng ngoài cùng trước, rồi tiêm dần vào trong." },
+        { type: "code", language: "typescript", code: `// 1. Khởi tạo tầng Data (Ngoài cùng)
+const dataSource = new TaskDataSource();
+const repository = new TaskRepositoryImpl(dataSource);
+
+// 2. Khởi tạo tầng Domain (Ở giữa)
+// Tiêm repository vào UseCase
+const createTaskUseCase = new CreateTaskUseCase(repository);
+
+// 3. Khởi tạo tầng Presentation (Giao diện)
+// Tiêm UseCase vào ViewModel
+const viewModel = new TaskViewModel(createTaskUseCase);
+
+// 4. Gắn ViewModel vào màn hình (View) của bạn
+// <TaskView viewModel={viewModel} />` },
+
+        { type: "heading", text: "Tổng kết" },
+        { type: "list", items: [
+          "Khi đổi Database: chỉ cần viết lại TaskDataSource và TaskRepositoryImpl — tầng Domain và UI không hề biết, không cần sửa đổi.",
+          "Khi đổi Framework UI (ví dụ từ React sang Vue): chỉ cần viết lại lớp View — ViewModel và UseCase được giữ nguyên.",
+          "Viết Unit Test cực dễ: vì UseCase chỉ nhận vào một Interface, bạn có thể tạo một 'Mock Repository' giả để test logic nghiệp vụ mà không cần bật Database thật."
+        ] },
+        { type: "quote", text: "Kiến trúc sạch không phải để làm phức tạp code của bạn, mà để đảm bảo phần quan trọng nhất — logic nghiệp vụ — sống sót qua mọi lần đổi framework, đổi database, hay đổi cả đội ngũ.", author: "Product/Tech Lead" }
+      ],
+      en: [
+        { type: "paragraph", text: "Clean Architecture exists to solve exactly one problem: protecting your application's business core from changes in outside technology — the database, the UI, the network framework." },
+        { type: "quote", text: "The one rule to remember: dependency arrows always point inward. Outer layers know about inner layers, but inner layers must NEVER know about outer layers." },
+
+        { type: "heading", text: "1. The 3-layer architecture map" },
+        { type: "paragraph", text: "Instead of the tangled MVC split, Clean Architecture divides application code into 3 distinct layers, each owning exactly one responsibility:" },
+        { type: "list", items: [
+          "Domain (Core Layer) — the heart of the application, holding business rules: Entity (core model), UseCase (an action), Repository Interface (a data contract). Must never contain framework code (no importing React, Vue, Express, SQL drivers...).",
+          "Data (Data Layer) — the carrier, fetching data from the outside world, shaping it, then handing it to the core: DTO (API/DB model), DataSource (calls the API/DB), Repository Impl (fulfills the contract).",
+          "Presentation (UI Layer) — interacts with the user: View (UI), ViewModel/Controller (handles display logic)."
+        ] },
+
+        { type: "heading", text: "2. Standard folder structure" },
+        { type: "paragraph", text: "Organizing folders by feature instead of by file type makes a project extremely easy to navigate and scale:" },
+        { type: "code", language: "text", code: `src/
+└── features/
+    └── task/ (Feature: Task management)
+        ├── domain/
+        │   ├── Task.entity.ts
+        │   ├── TaskRepository.interface.ts
+        │   └── CreateTask.usecase.ts
+        ├── data/
+        │   ├── Task.dto.ts
+        │   ├── Task.datasource.ts
+        │   └── TaskRepository.impl.ts
+        └── presentation/
+            ├── Task.view.tsx
+            └── Task.viewmodel.ts` },
+
+        { type: "heading", text: "3. A real-world example: the 'Create Task' feature" },
+        { type: "paragraph", text: "Let's trace how data flows through the 3 layers when a user creates a new Task." },
+
+        { type: "heading", text: "Layer 1: Domain — pure logic only" },
+        { type: "paragraph", text: "Defines the canonical model and the storage contract, with zero dependency on any external library." },
+        { type: "code", language: "typescript", code: `// 1. Entity: clean data + validation rules
+export class TaskEntity {
+    constructor(
+        public readonly id: string,
+        public title: string,
+        public isCompleted: boolean
+    ) {
+        if (title.trim() === "") throw new Error("Title cannot be empty!");
+    }
+}
+
+// 2. Repository Interface: only defines the contract, doesn't care where data is stored
+export interface ITaskRepository {
+    saveTask(task: TaskEntity): Promise<void>;
+}
+
+// 3. UseCase: the action of creating a Task
+export class CreateTaskUseCase {
+    // Receives the Repository via its interface (not tied to any specific DB)
+    constructor(private repository: ITaskRepository) {}
+
+    async execute(id: string, title: string): Promise<TaskEntity> {
+        const newTask = new TaskEntity(id, title, false);
+        await this.repository.saveTask(newTask);
+        return newTask;
+    }
+}` },
+
+        { type: "heading", text: "Layer 2: Data — talking to the database & mapping" },
+        { type: "paragraph", text: "Receives raw JSON from the API/DB, shapes it, then hands a clean Entity back to the Domain layer." },
+        { type: "code", language: "typescript", code: `// 1. DTO: the DB's real shape (may contain messy/extra fields)
+export interface TaskDTO {
+    _id: string;
+    task_title: string;
+    status_code: number;
+}
+
+// 2. DataSource: talks directly to the DB (MongoDB, SQL...) or an API
+export class TaskDataSource {
+    async insertToDB(dto: TaskDTO) {
+        // Actual database insert code goes here...
+        console.log("Saved to DB:", dto);
+    }
+}
+
+// 3. Repository Impl: fulfills the Domain layer's contract
+export class TaskRepositoryImpl implements ITaskRepository {
+    constructor(private dataSource: TaskDataSource) {}
+
+    async saveTask(entity: TaskEntity): Promise<void> {
+        // MAPPING: convert the clean Entity -> raw DTO for storage
+        const dto: TaskDTO = {
+            _id: entity.id,
+            task_title: entity.title,
+            status_code: entity.isCompleted ? 1 : 0
+        };
+        await this.dataSource.insertToDB(dto);
+    }
+}` },
+
+        { type: "heading", text: "Layer 3: Presentation — rendering the UI" },
+        { type: "paragraph", text: "Takes user input, calls the UseCase to process it, then updates the interface." },
+        { type: "code", language: "typescript", code: `export class TaskViewModel {
+    // Receives the UseCase
+    constructor(private createTaskUseCase: CreateTaskUseCase) {}
+
+    async onCreateButtonClicked(titleInput: string) {
+        try {
+            const newId = Math.random().toString();
+            // Call into the business core
+            const resultEntity = await this.createTaskUseCase.execute(newId, titleInput);
+
+            // Reformat the result for the UI (a UI Model)
+            const successMessage = \`Successfully created: \${resultEntity.title}\`;
+            alert(successMessage);
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    }
+}` },
+
+        { type: "heading", text: "4. Wiring it all together (Dependency Injection)" },
+        { type: "paragraph", text: "This is where the layers get glued together, at the app's entry point (App.ts, Main.ts). It follows one rule: build the outermost layer first, then inject inward." },
+        { type: "code", language: "typescript", code: `// 1. Build the Data layer (outermost)
+const dataSource = new TaskDataSource();
+const repository = new TaskRepositoryImpl(dataSource);
+
+// 2. Build the Domain layer (middle)
+// Inject the repository into the UseCase
+const createTaskUseCase = new CreateTaskUseCase(repository);
+
+// 3. Build the Presentation layer (UI)
+// Inject the UseCase into the ViewModel
+const viewModel = new TaskViewModel(createTaskUseCase);
+
+// 4. Wire the ViewModel into your screen (View)
+// <TaskView viewModel={viewModel} />` },
+
+        { type: "heading", text: "Wrap-up" },
+        { type: "list", items: [
+          "Swapping the database: just rewrite TaskDataSource and TaskRepositoryImpl — the Domain and UI layers never know, and never need to change.",
+          "Swapping the UI framework (e.g. React to Vue): just rewrite the View class — the ViewModel and UseCase stay exactly as they are.",
+          "Writing unit tests becomes trivial: since the UseCase only depends on an interface, you can hand it a fake 'Mock Repository' to test business logic without ever touching a real database."
+        ] },
+        { type: "quote", text: "Clean Architecture isn't there to make your code more complicated — it's there to make sure the most important part, your business logic, survives every framework change, every database swap, and every team handover.", author: "Product/Tech Lead" }
+      ]
+    }
+  },
+  {
+    id: "mvvm-ios-pattern",
+    category: "Mobile Development",
+    tags: ["MVVM", "iOS", "SwiftUI", "Architecture"],
+    date: "2026-07-14",
+    readTime: 9,
+    title: {
+      vi: "MVVM trong iOS: Từ 'Massive View Controller' đến kiến trúc dễ thở",
+      en: "MVVM in iOS: From 'Massive View Controller' to an Architecture You Can Breathe In"
+    },
+    summary: {
+      vi: "Giải thích MVVM bằng ví dụ nhà hàng dễ hiểu, kèm code Swift thực tế, mẹo ghi nhớ '3 chữ N', và những hạn chế mà MVVM không tự giải quyết được.",
+      en: "MVVM explained through a restaurant analogy, with real Swift code, a memorable 3-word mnemonic, and the limitations MVVM alone doesn't solve."
+    },
+    content: {
+      vi: [
+        { type: "paragraph", text: "Bạn đã bao giờ mở một file ViewController lên và thấy nó dài hơn 1000 dòng code chưa? Cuộn muốn mỏi tay mới tìm ra được đúng hàm cần sửa, và sửa một dòng hiển thị UI thôi mà tự nhiên logic tải dữ liệu ở đâu đó bị hỏng theo. Đó chính là lúc bạn cần đến MVVM (Model - View - ViewModel) — kiến trúc phổ biến bậc nhất khi lập trình iOS, đặc biệt là với SwiftUI." },
+
+        { type: "heading", text: "Vấn đề: 'Massive View Controller' - nỗi ám ảnh kinh điển của dân iOS" },
+        { type: "paragraph", text: "Khi mới học iOS, hầu như ai cũng đi theo mô hình MVC (Model - View - Controller) mặc định của Apple. Nghe thì hợp lý, nhưng trên thực tế, chữ 'C' (Controller) dần dần biến thành cái thùng rác chứa tất cả mọi thứ: gọi API, xử lý logic nghiệp vụ, format dữ liệu, quản lý UITableView, bắt sự kiện chạm... Dân trong nghề gọi vui hiện tượng này là 'Massive View Controller' — MVC lúc này không còn là Model-View-Controller nữa, mà là Massive-View-Controller." },
+        { type: "list", items: [
+          "UIViewController vừa phải vẽ giao diện, vừa gọi API, vừa parse JSON, vừa lưu Core Data.",
+          "Muốn viết Unit Test cho logic tính toán? Gần như không thể, vì logic đó dính chặt vào UIKit (UILabel, UITableView...).",
+          "Người sửa layout vô tình động đúng dòng code đang xử lý thanh toán → bug production lúc nào không hay."
+        ] },
+        { type: "code", language: "swift", code: `class ProductViewController: UIViewController {
+    var products: [Product] = []
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // 1. Tự gọi API ngay trong Controller
+        URLSession.shared.dataTask(with: URL(string: "https://api.shop.com/products")!) { data, _, _ in
+            guard let data = data else { return }
+            // 2. Tự parse JSON
+            let items = try? JSONDecoder().decode([Product].self, from: data)
+            self.products = items ?? []
+
+            // 3. Tự format dữ liệu hiển thị luôn trong Controller
+            DispatchQueue.main.async {
+                for p in self.products {
+                    print("Giá hiển thị: \\(Int(p.originalPrice * 0.9))đ (đã giảm 10%)")
+                }
+                self.tableView.reloadData()
+            }
+        }.resume()
+    }
+}` },
+        { type: "paragraph", text: "Nhìn qua thì chạy được ngay, nhưng đây chính là quả bom hẹn giờ. ProductViewController giờ biết quá nhiều thứ: nó biết cách gọi mạng, biết công thức giảm giá 10%, biết cách vẽ bảng. Ngày mai nếu Product Manager đổi công thức khuyến mãi, bạn phải mò vào đúng file Controller khổng lồ này để sửa, giữa hàng trăm dòng code layout khác." },
+
+        { type: "heading", text: "MVVM là gì? Hãy tưởng tượng bạn đang ở một nhà hàng" },
+        { type: "paragraph", text: "Thay vì để một mình ViewController ôm đồm tất cả, MVVM chia công việc ra làm 3 vai rõ ràng — giống hệt quy trình vận hành của một nhà hàng." },
+        { type: "list", items: [
+          "Model = nguyên liệu trong kho bếp: dữ liệu thô, chỉ chứa thông tin (tên món, giá gốc...), không biết gì về cách trình bày.",
+          "ViewModel = đầu bếp: lấy nguyên liệu (Model), chế biến (tính toán, format, áp dụng khuyến mãi) rồi bày sẵn ra đĩa để phục vụ.",
+          "View = bàn ăn và thực khách: không cần biết công thức nấu ăn hay bếp đang giảm giá kiểu gì, chỉ cần nhận đĩa thức ăn đã hoàn chỉnh và hiển thị (ăn) thôi.",
+          "Binding = người phục vụ bàn: liên tục chạy qua lại giữa bếp và bàn ăn. Hễ bếp làm xong món mới là món tự động được mang ra bàn ngay, thực khách không cần gọi lại lần hai."
+        ] },
+        { type: "quote", text: "Đầu bếp (ViewModel) không bao giờ cần biết bàn ăn đó trải khăn màu gì. Và ngược lại, thực khách (View) tuyệt đối không được tự ý xông vào bếp nấu ăn." },
+
+        { type: "heading", text: "Giải pháp: viết lại bằng MVVM" },
+        { type: "code", language: "swift", code: `// MODEL - chỉ chứa dữ liệu thô, không biết gì về UI
+struct Product {
+    let name: String
+    let originalPrice: Double
+}
+
+// VIEWMODEL - "đầu bếp", xử lý toàn bộ logic
+class ProductViewModel: ObservableObject {
+    @Published var displayItems: [String] = []
+    @Published var isLoading = false
+
+    private let service: ProductService
+
+    init(service: ProductService) {
+        self.service = service
+    }
+
+    @MainActor
+    func loadProducts() async {
+        isLoading = true
+        let products = await service.fetchProducts()
+
+        // Toàn bộ logic tính toán/format nằm ở đây, không dính UIKit
+        displayItems = products.map { product in
+            let discounted = Int(product.originalPrice * 0.9)
+            return "\\(product.name) - \\(discounted)đ (đã giảm 10%)"
+        }
+        isLoading = false
+    }
+}
+
+// VIEW - "thực khách", chỉ nhìn và hiển thị, không tự tính toán gì cả
+struct ProductListView: View {
+    @StateObject var viewModel: ProductViewModel
+
+    var body: some View {
+        List(viewModel.displayItems, id: \\.self) { item in
+            Text(item)
+        }
+        .task { await viewModel.loadProducts() }
+    }
+}` },
+        { type: "paragraph", text: "Để ý View giờ đây 'ngu ngơ' hẳn đi — chỉ có đúng một dòng hiển thị Text(item), không có phép tính giảm giá nào cả. Muốn đổi mức giảm giá từ 10% lên 20%? Chỉ cần sửa đúng 1 dòng trong ProductViewModel, không đụng đến bất kỳ dòng UI nào. Muốn viết Unit Test cho logic giảm giá? Cực kỳ dễ, vì ProductViewModel không hề import SwiftUI hay UIKit." },
+
+        { type: "heading", text: "Mẹo dễ nhớ: quy tắc 3 chữ N - Nhìn, Nghĩ, Nuôi" },
+        { type: "list", items: [
+          "View = Nhìn: chỉ hiển thị những gì được đưa cho, tuyệt đối không tự ý tính toán hay tự gọi API.",
+          "ViewModel = Nghĩ: nơi duy nhất chứa logic nghiệp vụ, xử lý, tính toán, quyết định trạng thái loading/error.",
+          "Model = Nuôi: chỉ nuôi dữ liệu thô (properties), không chứa logic hiển thị hay gọi mạng."
+        ] },
+        { type: "quote", text: "Nếu một dòng code trong View của bạn có phép tính +, -, *, / hay if/else phức tạp để quyết định hiển thị gì — đó là dấu hiệu logic đang chạy nhầm chỗ, hãy chuyển nó về ViewModel ngay.", author: "Mẹo ghi nhớ" },
+
+        { type: "heading", text: "Ví dụ trực quan: chuyện gì xảy ra khi người dùng bấm nút Like" },
+        { type: "list", items: [
+          "Bước 1: Người dùng bấm nút Like trên View → View gọi thẳng một hàm trên ViewModel (viewModel.toggleLike()), không tự xử lý gì thêm.",
+          "Bước 2: ViewModel nhận lệnh, cập nhật Model (đổi isLiked = true), rồi gọi Service để lưu thay đổi lên server.",
+          "Bước 3: ViewModel cập nhật thuộc tính @Published tương ứng (ví dụ likeCount += 1).",
+          "Bước 4: Nhờ cơ chế Binding của SwiftUI (Combine chạy phía dưới), View tự động 'nghe thấy' sự thay đổi và vẽ lại giao diện — trái tim chuyển sang màu đỏ ngay lập tức mà không ai cần gọi reloadData()."
+        ] },
+
+        { type: "heading", text: "Hạn chế tồn đọng của MVVM (không phải viên đạn bạc)" },
+        { type: "paragraph", text: "MVVM giải quyết rất tốt bài toán tách UI khỏi logic, nhưng nó không phải phép màu vạn năng. Dưới đây là những hạn chế mà bản thân MVVM không tự khắc phục được:" },
+        { type: "list", items: [
+          "Massive ViewModel: nếu không cẩn thận, ViewModel sẽ lặp lại đúng lỗi của Massive View Controller ngày xưa — chỉ đổi tên file. Vẫn cần tách riêng Service/Repository thay vì nhồi hết logic vào ViewModel.",
+          "Thiếu chuẩn cho Navigation: MVVM không quy định rõ ai chịu trách nhiệm điều hướng màn hình (push/present). Nhiều team để View tự điều hướng (phá vỡ nguyên tắc 'View chỉ nhìn'), số khác phải bổ sung thêm Coordinator pattern để giải quyết việc này.",
+          "Binding trong UIKit khá cồng kềnh: SwiftUI có @Published/Combine binding gần như 'miễn phí', nhưng nếu dự án dùng UIKit, bạn phải tự viết closure hoặc dùng RxSwift/Combine thủ công để nối ViewModel với View, tốn kha khá boilerplate.",
+          "Không phải lúc nào cũng cần thiết: với một màn hình Settings đơn giản chỉ có vài dòng static text, tạo hẳn một ViewModel riêng đôi khi là over-engineering, chỉ khiến số lượng file tăng lên vô ích.",
+          "Debug 2 chiều đôi khi rối hơn: vì dữ liệu tự động chảy qua lại giữa View và ViewModel, khi có bug, việc truy vết xem giá trị bị đổi từ đâu đôi khi khó hơn so với gọi hàm tường minh kiểu cũ."
+        ] },
+        { type: "code", language: "swift", code: `// Trong dự án UIKit (không có @Published), phải tự tay viết binding
+class ProductViewModel {
+    var onProductsUpdated: (() -> Void)? // Phải tự khai báo closure
+
+    private(set) var displayItems: [String] = [] {
+        didSet { onProductsUpdated?() } // Phải tự gọi tay mỗi khi dữ liệu đổi
+    }
+}
+
+// Trong ViewController phải tự đăng ký lắng nghe
+viewModel.onProductsUpdated = { [weak self] in
+    self?.tableView.reloadData()
+}` },
+        { type: "paragraph", text: "Tóm lại, MVVM không giải quyết tất cả vấn đề kiến trúc của bạn, nhưng nó là bước đệm cực kỳ vững chắc để tách UI ra khỏi logic nghiệp vụ. Kết hợp MVVM với Coordinator (cho điều hướng) và Repository (cho tầng dữ liệu) sẽ cho ra một kiến trúc gọn gàng, dễ test và dễ mở rộng lâu dài." },
+        { type: "quote", text: "Kiến trúc tốt không phải để khoe kỹ thuật, mà để 6 tháng sau khi quay lại đọc code, bạn vẫn hiểu ngay chuyện gì đang xảy ra và ở đâu.", author: "Product/Tech Lead" }
+      ],
+      en: [
+        { type: "paragraph", text: "Have you ever opened a ViewController file and found it over 1000 lines long? Scrolling forever just to find the right function, and changing one line of UI code somehow breaks the data-loading logic somewhere else. That's exactly when you need MVVM (Model - View - ViewModel) — one of the most popular architectures in iOS development, especially with SwiftUI." },
+
+        { type: "heading", text: "The Problem: 'Massive View Controller' - iOS's classic nightmare" },
+        { type: "paragraph", text: "When you first learn iOS, you almost always follow Apple's default MVC (Model - View - Controller) pattern. Sounds reasonable, but in practice, the 'C' (Controller) gradually turns into a trash bin holding everything: API calls, business logic, data formatting, UITableView management, touch handling... Engineers jokingly call this phenomenon 'Massive View Controller' — MVC no longer stands for Model-View-Controller, but Massive-View-Controller." },
+        { type: "list", items: [
+          "The UIViewController has to draw the UI, call APIs, parse JSON, and save to Core Data all at once.",
+          "Want to unit test the calculation logic? Nearly impossible, since it's glued to UIKit (UILabel, UITableView...).",
+          "Someone tweaking layout accidentally touches the exact line handling payment → production bug you don't notice until it's too late."
+        ] },
+        { type: "code", language: "swift", code: `class ProductViewController: UIViewController {
+    var products: [Product] = []
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // 1. Calling the API directly inside the Controller
+        URLSession.shared.dataTask(with: URL(string: "https://api.shop.com/products")!) { data, _, _ in
+            guard let data = data else { return }
+            // 2. Parsing JSON here too
+            let items = try? JSONDecoder().decode([Product].self, from: data)
+            self.products = items ?? []
+
+            // 3. Formatting display data right inside the Controller
+            DispatchQueue.main.async {
+                for p in self.products {
+                    print("Display price: \\(Int(p.originalPrice * 0.9)) VND (10% off)")
+                }
+                self.tableView.reloadData()
+            }
+        }.resume()
+    }
+}` },
+        { type: "paragraph", text: "It runs fine at a glance, but this is a ticking time bomb. ProductViewController now knows far too much: how to call the network, the 10% discount formula, and how to draw the table. If the Product Manager changes the promotion formula tomorrow, you have to dig through this giant Controller file, buried among hundreds of other layout lines." },
+
+        { type: "heading", text: "What is MVVM? Imagine you're at a restaurant" },
+        { type: "paragraph", text: "Instead of letting a single ViewController carry everything, MVVM splits the work into 3 clear roles — exactly like how a restaurant operates." },
+        { type: "list", items: [
+          "Model = ingredients in the kitchen storage: raw data (item name, base price...), it knows nothing about presentation.",
+          "ViewModel = the chef: takes the ingredients (Model), prepares them (calculates, formats, applies discounts), and plates them ready to serve.",
+          "View = the dining table and the guest: doesn't need to know the recipe or how the kitchen calculates discounts, it just receives the finished plate and displays (eats) it.",
+          "Binding = the waiter: constantly running between the kitchen and the table. The moment the kitchen finishes a new dish, it's automatically brought to the table — the guest never has to ask twice."
+        ] },
+        { type: "quote", text: "The chef (ViewModel) never needs to know what color tablecloth is on that table. And conversely, the guest (View) must never barge into the kitchen and start cooking." },
+
+        { type: "heading", text: "The Solution: rewriting it with MVVM" },
+        { type: "code", language: "swift", code: `// MODEL - holds only raw data, knows nothing about UI
+struct Product {
+    let name: String
+    let originalPrice: Double
+}
+
+// VIEWMODEL - the "chef", handles all the logic
+class ProductViewModel: ObservableObject {
+    @Published var displayItems: [String] = []
+    @Published var isLoading = false
+
+    private let service: ProductService
+
+    init(service: ProductService) {
+        self.service = service
+    }
+
+    @MainActor
+    func loadProducts() async {
+        isLoading = true
+        let products = await service.fetchProducts()
+
+        // All calculation/formatting logic lives here, no UIKit involved
+        displayItems = products.map { product in
+            let discounted = Int(product.originalPrice * 0.9)
+            return "\\(product.name) - \\(discounted) VND (10% off)"
+        }
+        isLoading = false
+    }
+}
+
+// VIEW - the "guest", only looks and displays, never calculates anything
+struct ProductListView: View {
+    @StateObject var viewModel: ProductViewModel
+
+    var body: some View {
+        List(viewModel.displayItems, id: \\.self) { item in
+            Text(item)
+        }
+        .task { await viewModel.loadProducts() }
+    }
+}` },
+        { type: "paragraph", text: "Notice how the View is now completely 'dumb' — just one line, Text(item), with zero discount calculation. Want to change the discount from 10% to 20%? Just edit one line inside ProductViewModel, without touching any UI code. Want to unit test the discount logic? Trivially easy, because ProductViewModel never imports SwiftUI or UIKit." },
+
+        { type: "heading", text: "Memory trick: the 3-word rule - Look, Think, Hold" },
+        { type: "list", items: [
+          "View = Look: only displays whatever it's given, never calculates anything or calls an API on its own.",
+          "ViewModel = Think: the single place holding business logic, calculations, and deciding loading/error states.",
+          "Model = Hold: only holds raw data (properties), no display logic and no networking."
+        ] },
+        { type: "quote", text: "If a line inside your View contains +, -, *, / math, or a complex if/else deciding what to render — that's a sign the logic is running in the wrong place. Move it to the ViewModel immediately.", author: "Memory tip" },
+
+        { type: "heading", text: "A visual walkthrough: what happens when a user taps Like" },
+        { type: "list", items: [
+          "Step 1: The user taps Like on the View → the View calls a function directly on the ViewModel (viewModel.toggleLike()), doing nothing else itself.",
+          "Step 2: The ViewModel receives the command, updates the Model (sets isLiked = true), then calls the Service to persist the change on the server.",
+          "Step 3: The ViewModel updates its corresponding @Published property (e.g. likeCount += 1).",
+          "Step 4: Thanks to SwiftUI's Binding mechanism (Combine running underneath), the View automatically 'hears' the change and redraws — the heart turns red instantly, with nobody ever calling reloadData()."
+        ] },
+
+        { type: "heading", text: "Remaining limitations of MVVM (it's not a silver bullet)" },
+        { type: "paragraph", text: "MVVM does a great job separating UI from logic, but it isn't magic. Here are the limitations MVVM alone doesn't fix:" },
+        { type: "list", items: [
+          "Massive ViewModel: without care, the ViewModel repeats the exact mistake of the old Massive View Controller — just under a different file name. You still need separate Service/Repository layers instead of dumping everything into the ViewModel.",
+          "No standard for Navigation: MVVM doesn't define who's responsible for screen navigation (push/present). Many teams let the View navigate itself (breaking the 'View only looks' rule), while others add a Coordinator pattern on top to solve this.",
+          "Binding in UIKit is clunky: SwiftUI gets @Published/Combine binding almost for free, but if your project uses UIKit, you have to hand-write closures or wire up RxSwift/Combine manually to connect ViewModel and View — a fair amount of boilerplate.",
+          "Not always necessary: for a simple Settings screen with a few lines of static text, spinning up a dedicated ViewModel can be over-engineering, just inflating the file count for no real benefit.",
+          "Two-way debugging can get messy: since data automatically flows back and forth between View and ViewModel, tracing where a value got changed during a bug hunt can be harder than following an explicit, old-school function call."
+        ] },
+        { type: "code", language: "swift", code: `// In a UIKit project (no @Published), you have to hand-write the binding
+class ProductViewModel {
+    var onProductsUpdated: (() -> Void)? // Must declare this closure yourself
+
+    private(set) var displayItems: [String] = [] {
+        didSet { onProductsUpdated?() } // Must fire it manually on every change
+    }
+}
+
+// The ViewController must manually register a listener
+viewModel.onProductsUpdated = { [weak self] in
+    self?.tableView.reloadData()
+}` },
+        { type: "paragraph", text: "In short, MVVM won't solve every architectural problem you have, but it's a rock-solid foundation for separating UI from business logic. Pairing MVVM with a Coordinator (for navigation) and a Repository (for the data layer) gives you an architecture that's clean, testable, and easy to scale over the long run." },
+        { type: "quote", text: "Good architecture isn't there to show off technique — it's so that six months from now, when you come back to this code, you instantly understand what's happening and where.", author: "Product/Tech Lead" }
+      ]
+    }
+  },
+  {
     id: "tiktok-api-adapter",
     category: "Architecture",
     tags: ["API Integration", "Design Patterns", "Reliability"],
